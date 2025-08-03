@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Base colors */
+    --background: 0 0% 100%;
+    --foreground: 215 28% 17%;
+
+    /* Surface colors */
+    --surface: 210 40% 98%;
+    --surface-elevated: 0 0% 100%;
+    --surface-glass: 0 0% 100% / 0.8;
+
+    /* Card colors */
+    --card: 0 0% 100%;
+    --card-foreground: 215 28% 17%;
+
+    /* Popover colors */
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 28% 17%;
+
+    /* Brand colors */
+    --brand: 258 90% 66%;
+    --brand-foreground: 0 0% 100%;
+    --brand-muted: 258 90% 66% / 0.1;
+
+    /* Primary colors */
+    --primary: 215 28% 17%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary colors */
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 215 28% 17%;
+
+    /* Muted colors */
+    --muted: 214 32% 91%;
+    --muted-foreground: 215 16% 47%;
+
+    /* Accent colors */
+    --accent: 258 90% 66%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive colors */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Border and input */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 258 90% 66%;
+
+    --radius: 0.5rem;
+
+    /* Sidebar colors */
+    --sidebar-background: 210 40% 98%;
+    --sidebar-foreground: 215 28% 17%;
+    --sidebar-primary: 258 90% 66%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 214 32% 91%;
+    --sidebar-accent-foreground: 215 28% 17%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 258 90% 66%;
+  }
+
+  .dark {
+    /* Base colors */
+    --background: 217 33% 7%;
+    --foreground: 210 40% 98%;
+
+    /* Surface colors */
+    --surface: 215 28% 17%;
+    --surface-elevated: 217 32% 23%;
+    --surface-glass: 215 28% 17% / 0.8;
+
+    /* Card colors */
+    --card: 215 28% 17%;
+    --card-foreground: 210 40% 98%;
+
+    /* Popover colors */
+    --popover: 215 28% 17%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Brand colors */
+    --brand: 213 93% 73%;
+    --brand-foreground: 215 28% 17%;
+    --brand-muted: 213 93% 73% / 0.1;
+
+    /* Primary colors */
+    --primary: 210 40% 98%;
+    --primary-foreground: 215 28% 17%;
+
+    /* Secondary colors */
+    --secondary: 217 32% 23%;
+    --secondary-foreground: 210 40% 98%;
+
+    /* Muted colors */
+    --muted: 217 32% 23%;
+    --muted-foreground: 215 20% 65%;
+
+    /* Accent colors */
+    --accent: 213 93% 73%;
+    --accent-foreground: 215 28% 17%;
+
+    /* Destructive colors */
+    --destructive: 0 91% 71%;
+    --destructive-foreground: 215 28% 17%;
+
+    /* Border and input */
+    --border: 217 19% 33%;
+    --input: 217 19% 33%;
+    --ring: 213 93% 73%;
+
+    /* Sidebar colors */
+    --sidebar-background: 215 28% 17%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 213 93% 73%;
+    --sidebar-primary-foreground: 215 28% 17%;
+    --sidebar-accent: 217 32% 23%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 19% 33%;
+    --sidebar-ring: 213 93% 73%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  /* Custom scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-md;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+
+  /* Dark mode scrollbar */
+  .dark ::-webkit-scrollbar-track {
+    @apply bg-surface;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/40;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/60;
+  }
+}
+
+@layer components {
+  /* Glass effect utilities */
+  .glass-effect {
+    @apply backdrop-blur-lg bg-surface-glass border border-border/50;
+  }
+
+  /* Panel resize handle */
+  .resize-handle {
+    @apply w-1 bg-border hover:bg-accent cursor-col-resize transition-colors relative;
+  }
+
+  .resize-handle:hover::after {
+    content: '';
+    @apply absolute inset-y-0 -left-1 -right-1 bg-accent/20;
+  }
+
+  /* Message bubble animations */
+  .message-bubble {
+    @apply animate-fade-in-up;
+  }
+
+  /* Loading skeleton */
+  .skeleton {
+    @apply bg-muted animate-pulse-fast rounded;
+  }
+
+  /* Rainbow text effect */
+  .rainbow-text {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbow-shine 3s ease-in-out infinite;
+  }
+
+  /* Notification styles */
+  .notification {
+    @apply fixed top-4 right-4 z-50 animate-slide-in-right;
+  }
+}
