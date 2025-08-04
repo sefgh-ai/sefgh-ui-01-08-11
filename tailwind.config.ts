@@ -22,6 +22,16 @@ export default {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
 			},
 			colors: {
+				// New color palette
+				'light-background': '#F3F3E3',
+				'light-accent': '#A9CFE0',
+				'light-text': '#606F69',
+				'dark-background': '#2F2A24',
+				'dark-accent': '#ABBBC0',
+				'dark-text': '#FFFFFF',
+				'on-accent-text': '#2F2A24',
+
+				// Design system tokens
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',

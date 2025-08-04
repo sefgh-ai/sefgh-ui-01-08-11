@@ -8,123 +8,123 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Base colors */
-    --background: 0 0% 100%;
-    --foreground: 215 28% 17%;
+    /* Base colors - Light Theme: #F3F3E3, #A9CFE0, #606F69 */
+    --background: 60 4% 92%;  /* #F3F3E3 */
+    --foreground: 147 7% 42%; /* #606F69 */
 
     /* Surface colors */
-    --surface: 210 40% 98%;
-    --surface-elevated: 0 0% 100%;
-    --surface-glass: 0 0% 100% / 0.8;
+    --surface: 60 4% 95%;     /* Slightly lighter than background */
+    --surface-elevated: 0 0% 100%; /* Pure white for elevated elements */
+    --surface-glass: 60 4% 92% / 0.8;
 
     /* Card colors */
-    --card: 0 0% 100%;
-    --card-foreground: 215 28% 17%;
+    --card: 60 4% 95%;        /* Slightly differentiated from background */
+    --card-foreground: 147 7% 42%; /* #606F69 */
 
     /* Popover colors */
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 28% 17%;
+    --popover: 0 0% 100%;     /* White for better contrast */
+    --popover-foreground: 147 7% 42%; /* #606F69 */
 
-    /* Brand colors */
-    --brand: 258 90% 66%;
-    --brand-foreground: 0 0% 100%;
-    --brand-muted: 258 90% 66% / 0.1;
+    /* Brand colors - Using accent as brand */
+    --brand: 196 50% 77%;     /* #A9CFE0 */
+    --brand-foreground: 33 19% 16%; /* #2F2A24 for text on accent */
+    --brand-muted: 196 50% 77% / 0.1;
 
-    /* Primary colors */
-    --primary: 215 28% 17%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary colors - Using accent for interactive elements */
+    --primary: 196 50% 77%;   /* #A9CFE0 */
+    --primary-foreground: 33 19% 16%; /* #2F2A24 */
 
     /* Secondary colors */
-    --secondary: 210 40% 98%;
-    --secondary-foreground: 215 28% 17%;
+    --secondary: 60 4% 88%;   /* Muted version of background */
+    --secondary-foreground: 147 7% 42%; /* #606F69 */
 
     /* Muted colors */
-    --muted: 214 32% 91%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 60 4% 88%;       /* Lighter variation */
+    --muted-foreground: 147 7% 42% / 0.7; /* Primary text with opacity */
 
     /* Accent colors */
-    --accent: 258 90% 66%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 196 50% 77%;    /* #A9CFE0 */
+    --accent-foreground: 33 19% 16%; /* #2F2A24 */
 
     /* Destructive colors */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     /* Border and input */
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 258 90% 66%;
+    --border: 147 7% 42% / 0.2; /* Primary text with low opacity */
+    --input: 60 4% 88%;       /* Muted background */
+    --ring: 196 50% 77%;      /* Accent color for focus rings */
 
     --radius: 0.5rem;
 
     /* Sidebar colors */
-    --sidebar-background: 210 40% 98%;
-    --sidebar-foreground: 215 28% 17%;
-    --sidebar-primary: 258 90% 66%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 214 32% 91%;
-    --sidebar-accent-foreground: 215 28% 17%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 258 90% 66%;
+    --sidebar-background: 60 4% 95%; /* Slightly differentiated */
+    --sidebar-foreground: 147 7% 42%; /* #606F69 */
+    --sidebar-primary: 196 50% 77%;  /* #A9CFE0 */
+    --sidebar-primary-foreground: 33 19% 16%; /* #2F2A24 */
+    --sidebar-accent: 60 4% 88%;     /* Muted */
+    --sidebar-accent-foreground: 147 7% 42%; /* #606F69 */
+    --sidebar-border: 147 7% 42% / 0.2;
+    --sidebar-ring: 196 50% 77%;
   }
 
   .dark {
-    /* Base colors */
-    --background: 217 33% 7%;
-    --foreground: 210 40% 98%;
+    /* Base colors - Dark Theme: #2F2A24, #ABBBC0, #FFFFFF */
+    --background: 33 19% 16%;  /* #2F2A24 */
+    --foreground: 0 0% 100%;   /* #FFFFFF */
 
     /* Surface colors */
-    --surface: 215 28% 17%;
-    --surface-elevated: 217 32% 23%;
-    --surface-glass: 215 28% 17% / 0.8;
+    --surface: 33 19% 20%;     /* Slightly lighter than background */
+    --surface-elevated: 33 19% 24%; /* More elevated surfaces */
+    --surface-glass: 33 19% 16% / 0.8;
 
     /* Card colors */
-    --card: 215 28% 17%;
-    --card-foreground: 210 40% 98%;
+    --card: 33 19% 20%;        /* Slightly differentiated from background */
+    --card-foreground: 0 0% 100%; /* #FFFFFF */
 
     /* Popover colors */
-    --popover: 215 28% 17%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 33 19% 24%;     /* Elevated surface */
+    --popover-foreground: 0 0% 100%; /* #FFFFFF */
 
-    /* Brand colors */
-    --brand: 213 93% 73%;
-    --brand-foreground: 215 28% 17%;
-    --brand-muted: 213 93% 73% / 0.1;
+    /* Brand colors - Using accent as brand */
+    --brand: 197 20% 71%;      /* #ABBBC0 */
+    --brand-foreground: 33 19% 16%; /* #2F2A24 for text on accent */
+    --brand-muted: 197 20% 71% / 0.1;
 
-    /* Primary colors */
-    --primary: 210 40% 98%;
-    --primary-foreground: 215 28% 17%;
+    /* Primary colors - Using accent for interactive elements */
+    --primary: 197 20% 71%;    /* #ABBBC0 */
+    --primary-foreground: 33 19% 16%; /* #2F2A24 */
 
     /* Secondary colors */
-    --secondary: 217 32% 23%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 33 19% 20%;   /* Slightly lighter than background */
+    --secondary-foreground: 0 0% 100%; /* #FFFFFF */
 
     /* Muted colors */
-    --muted: 217 32% 23%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 33 19% 20%;       /* Lighter variation */
+    --muted-foreground: 197 20% 71%; /* Secondary accent color */
 
     /* Accent colors */
-    --accent: 213 93% 73%;
-    --accent-foreground: 215 28% 17%;
+    --accent: 197 20% 71%;     /* #ABBBC0 */
+    --accent-foreground: 33 19% 16%; /* #2F2A24 */
 
     /* Destructive colors */
-    --destructive: 0 91% 71%;
-    --destructive-foreground: 215 28% 17%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
     /* Border and input */
-    --border: 217 19% 33%;
-    --input: 217 19% 33%;
-    --ring: 213 93% 73%;
+    --border: 0 0% 100% / 0.1;  /* White with low opacity */
+    --input: 33 19% 20%;       /* Muted background */
+    --ring: 197 20% 71%;       /* Accent color for focus rings */
 
     /* Sidebar colors */
-    --sidebar-background: 215 28% 17%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 213 93% 73%;
-    --sidebar-primary-foreground: 215 28% 17%;
-    --sidebar-accent: 217 32% 23%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 19% 33%;
-    --sidebar-ring: 213 93% 73%;
+    --sidebar-background: 33 19% 20%; /* Slightly differentiated */
+    --sidebar-foreground: 0 0% 100%; /* #FFFFFF */
+    --sidebar-primary: 197 20% 71%;  /* #ABBBC0 */
+    --sidebar-primary-foreground: 33 19% 16%; /* #2F2A24 */
+    --sidebar-accent: 33 19% 24%;    /* Elevated */
+    --sidebar-accent-foreground: 0 0% 100%; /* #FFFFFF */
+    --sidebar-border: 0 0% 100% / 0.1;
+    --sidebar-ring: 197 20% 71%;
   }
 }
 
