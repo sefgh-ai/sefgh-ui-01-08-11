@@ -338,65 +338,59 @@ export const ChatPanel = ({
       {/* Input area */}
       <div className="p-4">
         <form onSubmit={handleSubmit} className="relative">
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl px-3 py-1 flex items-center gap-2">
-            {/* Tools dropdown */}
-            <div className="relative tools-menu-container">
-              <Button
-                type="button"
-                variant="ghost"
-                className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full px-3 py-1.5 text-sm"
-                onClick={() => setShowToolsMenu(!showToolsMenu)}
-              >
-                <Settings className="h-4 w-4" />
-                <span>Tools</span>
-                <ChevronDown className="h-3 w-3" />
-              </Button>
+          {/* Main pill-shaped container - made thinner */}
+          <div className="bg-surface rounded-full px-4 py-1.5 flex items-center gap-3 shadow-sm border border-border">
+            {/* Attach button with dropdown */}
+            <div className="relative attach-menu-container">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 rounded-full text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    onClick={() => setShowAttachMenu(!showAttachMenu)}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Attach files</p>
+                </TooltipContent>
+              </Tooltip>
               
-              {/* Tools dropdown menu */}
-              {showToolsMenu && (
-                <div className="absolute bottom-full left-0 mb-2 bg-gray-800 text-white rounded-lg shadow-xl p-2 w-56 z-50">
-                  <div 
-                    className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded cursor-pointer"
+              {/* Attach dropdown menu */}
+              {showAttachMenu && (
+                <div className="absolute bottom-full left-0 mb-2 bg-popover border border-border rounded-lg shadow-lg p-1 w-48 z-50">
+                  <button 
+                    className="flex items-center gap-3 w-full p-2 hover:bg-accent hover:text-accent-foreground rounded text-sm cursor-pointer"
                     onClick={() => {
-                      onToggleGithubSearch?.();
-                      setShowToolsMenu(false);
+                      handleFileUpload();
+                      setShowAttachMenu(false);
                     }}
                   >
-                    <Github className="h-4 w-4" />
-                    <span className="text-sm">Github search</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded cursor-pointer">
+                    <Paperclip className="h-4 w-4" />
+                    <span>Upload files</span>
+                  </button>
+                  <button className="flex items-center gap-3 w-full p-2 hover:bg-accent hover:text-accent-foreground rounded text-sm cursor-pointer">
                     <ImageIcon className="h-4 w-4" />
-                    <span className="text-sm">Create image</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded cursor-pointer">
-                    <Lightbulb className="h-4 w-4" />
-                    <span className="text-sm">Think longer</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded cursor-pointer">
-                    <Wifi className="h-4 w-4" />
-                    <span className="text-sm">Deep research</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded cursor-pointer">
-                    <Wifi className="h-4 w-4" />
-                    <span className="text-sm">Web search</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded cursor-pointer">
-                    <PaintBucket className="h-4 w-4" />
-                    <span className="text-sm">Canvas</span>
-                  </div>
+                    <span>Upload image</span>
+                  </button>
+                  <button className="flex items-center gap-3 w-full p-2 hover:bg-accent hover:text-accent-foreground rounded text-sm cursor-pointer">
+                    <Code className="h-4 w-4" />
+                    <span>Upload code</span>
+                  </button>
                 </div>
               )}
             </div>
 
-            {/* Input field */}
+            {/* Input field - smaller and streamlined */}
             <Textarea
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask anything"
-              className="flex-1 min-h-[20px] max-h-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none placeholder:text-gray-500 dark:placeholder:text-gray-400 text-sm flex items-center placeholder:animate-pulse py-1 leading-normal"
-              style={{ display: 'flex', alignItems: 'center' }}
+              placeholder="Message SEFGH-AI..."
+              className="flex-1 min-h-[24px] max-h-32 bg-transparent border-none focus:ring-0 focus:outline-none resize-none placeholder:text-muted-foreground text-sm py-0 leading-6"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -406,7 +400,7 @@ export const ChatPanel = ({
             />
 
             {/* Right side buttons */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               {/* Voice input button */}
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -414,10 +408,10 @@ export const ChatPanel = ({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className={`h-8 w-8 rounded-full ${
+                    className={`h-7 w-7 rounded-full ${
                       isListening 
-                        ? 'text-primary animate-pulse' 
-                        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                        ? 'text-primary animate-pulse-fast bg-accent' 
+                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                     }`}
                     onClick={handleVoiceSearch}
                     disabled={isListening}
@@ -437,9 +431,9 @@ export const ChatPanel = ({
                     <Button 
                       type="submit" 
                       disabled={isLoading}
-                      className="h-8 w-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 p-0"
+                      className="h-7 w-7 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 p-0 ml-1"
                     >
-                      <Send className="h-4 w-4" />
+                      <Send className="h-3.5 w-3.5" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -448,6 +442,13 @@ export const ChatPanel = ({
                 </Tooltip>
               )}
             </div>
+          </div>
+          
+          {/* Helper text - smaller and lighter */}
+          <div className="flex justify-center mt-2">
+            <p className="text-xs text-muted-foreground">
+              Press Enter to send, Shift+Enter for new line
+            </p>
           </div>
         </form>
       </div>
