@@ -23,7 +23,15 @@ import {
   Lightbulb,
   Wifi,
   PaintBucket,
-  ChevronDown
+  ChevronDown,
+  BookOpen,
+  Image,
+  Brain,
+  Search,
+  Globe,
+  Layout,
+  ChevronRight,
+  Cloud
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -61,34 +69,110 @@ export const ChatPanel = ({
   const [editContent, setEditContent] = useState('');
   const [showAttachMenu, setShowAttachMenu] = useState(false);
   const [showToolsMenu, setShowToolsMenu] = useState(false);
+  const [showAddMenu, setShowAddMenu] = useState(false);
+  const [showSubMenu, setShowSubMenu] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [toolsMenuPosition, setToolsMenuPosition] = useState({ x: 0, y: 0 });
+  const [addMenuPosition, setAddMenuPosition] = useState({ x: 0, y: 0 });
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+  const [isClosing, setIsClosing] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const toolsButtonRef = useRef<HTMLButtonElement>(null);
+  const addButtonRef = useRef<HTMLButtonElement>(null);
+  const toolsMenuRef = useRef<HTMLDivElement>(null);
+  const addMenuRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Define tools and add menu items
+  const toolsItems = [
+    { id: 'study', icon: BookOpen, label: 'Study and Learn', action: () => handleToolAction('study') },
+    { id: 'image', icon: Image, label: 'Create Image', action: () => handleToolAction('image') },
+    { id: 'think', icon: Brain, label: 'Think Longer', action: () => handleToolAction('think') },
+    { id: 'research', icon: Search, label: 'Deep Research', action: () => handleToolAction('research') },
+    { id: 'web', icon: Globe, label: 'Web Search', action: () => handleToolAction('web') },
+    { id: 'canvas', icon: Layout, label: 'Canvas', action: () => handleToolAction('canvas') }
+  ];
+
+  const addItems = [
+    { id: 'files', label: 'Add Photos & Files', action: () => handleFileUpload() },
+    { id: 'apps', label: 'Add from Apps', hasSubmenu: true }
+  ];
+
+  const subMenuItems = [
+    { id: 'gdrive', icon: Cloud, label: 'Google Drive', action: () => handleCloudService('gdrive') },
+    { id: 'onedrive-personal', icon: Cloud, label: 'OneDrive (Personal)', action: () => handleCloudService('onedrive-personal') },
+    { id: 'onedrive-work', icon: Cloud, label: 'OneDrive (Work)', action: () => handleCloudService('onedrive-work') }
+  ];
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (showAttachMenu && !(event.target as Element).closest('.attach-menu-container')) {
+      const target = event.target as Element;
+      
+      if (showAttachMenu && !target.closest('.attach-menu-container')) {
         setShowAttachMenu(false);
       }
-      if (showToolsMenu && !(event.target as Element).closest('.tools-menu-container')) {
-        setShowToolsMenu(false);
+      if (showToolsMenu && !target.closest('.tools-menu-container')) {
+        closeToolsMenu();
+      }
+      if (showAddMenu && !target.closest('.add-menu-container')) {
+        closeAddMenu();
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!showToolsMenu && !showAddMenu) return;
+
+      switch (event.key) {
+        case 'Escape':
+          event.preventDefault();
+          closeAllMenus();
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          if (showToolsMenu) {
+            setFocusedIndex(prev => (prev + 1) % toolsItems.length);
+          }
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          if (showToolsMenu) {
+            setFocusedIndex(prev => prev <= 0 ? toolsItems.length - 1 : prev - 1);
+          }
+          break;
+        case 'Enter':
+          event.preventDefault();
+          if (showToolsMenu && focusedIndex >= 0) {
+            handleToolItemClick(toolsItems[focusedIndex], focusedIndex);
+          }
+          break;
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showAttachMenu, showToolsMenu]);
+  }, [showAttachMenu, showToolsMenu, showAddMenu, focusedIndex, toolsItems]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -180,6 +264,127 @@ export const ChatPanel = ({
     };
 
     recognition.start();
+  };
+
+  // Enhanced Tools Menu Functions
+  const handleToolsClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    
+    if (showToolsMenu) {
+      closeToolsMenu();
+      return;
+    }
+
+    const rect = toolsButtonRef.current?.getBoundingClientRect();
+    if (rect) {
+      setToolsMenuPosition({
+        x: isMobile ? 0 : rect.left,
+        y: isMobile ? 0 : rect.top - 8
+      });
+    }
+    
+    setShowToolsMenu(true);
+    setFocusedIndex(-1);
+    closeAddMenu();
+  };
+
+  const closeToolsMenu = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setShowToolsMenu(false);
+      setIsClosing(false);
+      setFocusedIndex(-1);
+    }, 150);
+  };
+
+  const handleToolAction = (tool: string) => {
+    toast({
+      title: `${tool.charAt(0).toUpperCase() + tool.slice(1)} Tool`,
+      description: `Launching ${tool} functionality...`,
+      duration: 2000,
+    });
+    
+    closeToolsMenu();
+    
+    // Here you would implement the actual tool functionality
+    switch (tool) {
+      case 'image':
+        // Launch image creation modal
+        break;
+      case 'study':
+        // Launch study mode
+        break;
+      // Add other tool cases
+    }
+  };
+
+  const handleToolItemClick = (item: typeof toolsItems[0], index: number, event?: React.MouseEvent) => {
+    if (event) {
+      // Create ripple effect
+      const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      
+      const element = event.currentTarget as HTMLElement;
+      element.style.setProperty('--ripple-x', `${x}%`);
+      element.style.setProperty('--ripple-y', `${y}%`);
+      element.classList.add('ripple');
+      
+      setTimeout(() => {
+        element.classList.remove('ripple');
+      }, 200);
+    }
+    
+    setTimeout(() => {
+      item.action();
+    }, 200);
+  };
+
+  // Enhanced Add Menu Functions
+  const handleAddClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    
+    if (showAddMenu) {
+      closeAddMenu();
+      return;
+    }
+
+    const rect = addButtonRef.current?.getBoundingClientRect();
+    if (rect) {
+      setAddMenuPosition({
+        x: isMobile ? 0 : rect.left,
+        y: isMobile ? 0 : rect.top - 8
+      });
+    }
+    
+    setShowAddMenu(true);
+    closeToolsMenu();
+  };
+
+  const closeAddMenu = () => {
+    setShowSubMenu(false);
+    setIsClosing(true);
+    setTimeout(() => {
+      setShowAddMenu(false);
+      setIsClosing(false);
+    }, 150);
+  };
+
+  const closeAllMenus = () => {
+    closeToolsMenu();
+    closeAddMenu();
+    setShowAttachMenu(false);
+  };
+
+  const handleCloudService = (service: string) => {
+    toast({
+      title: `Connecting to ${service}`,
+      description: `Opening OAuth flow for ${service}...`,
+      duration: 2000,
+    });
+    
+    closeAddMenu();
+    // Implement OAuth flow here
   };
 
   return (
@@ -340,48 +545,34 @@ export const ChatPanel = ({
         <form onSubmit={handleSubmit} className="relative">
           {/* Main pill-shaped container - made thinner */}
           <div className="bg-surface rounded-full px-4 py-1.5 flex items-center gap-3 shadow-sm border border-border">
-            {/* Attach button with dropdown */}
-            <div className="relative attach-menu-container">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 rounded-full text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                    onClick={() => setShowAttachMenu(!showAttachMenu)}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Attach files</p>
-                </TooltipContent>
-              </Tooltip>
-              
-              {/* Attach dropdown menu */}
-              {showAttachMenu && (
-                <div className="absolute bottom-full left-0 mb-2 bg-popover border border-border rounded-lg shadow-lg p-1 w-48 z-50">
-                  <button 
-                    className="flex items-center gap-3 w-full p-2 hover:bg-accent hover:text-accent-foreground rounded text-sm cursor-pointer"
-                    onClick={() => {
-                      handleFileUpload();
-                      setShowAttachMenu(false);
-                    }}
-                  >
-                    <Paperclip className="h-4 w-4" />
-                    <span>Upload files</span>
-                  </button>
-                  <button className="flex items-center gap-3 w-full p-2 hover:bg-accent hover:text-accent-foreground rounded text-sm cursor-pointer">
-                    <ImageIcon className="h-4 w-4" />
-                    <span>Upload image</span>
-                  </button>
-                  <button className="flex items-center gap-3 w-full p-2 hover:bg-accent hover:text-accent-foreground rounded text-sm cursor-pointer">
-                    <Code className="h-4 w-4" />
-                    <span>Upload code</span>
-                  </button>
-                </div>
-              )}
+            {/* Enhanced Tools Button */}
+            <div className="relative tools-menu-container">
+              <button
+                ref={toolsButtonRef}
+                type="button"
+                onClick={handleToolsClick}
+                className="tools-button"
+                aria-label="Open tools menu"
+                aria-expanded={showToolsMenu}
+              >
+                <Settings className="h-4 w-4" />
+                <span>Tools</span>
+              </button>
+            </div>
+
+            {/* Enhanced Add Button */}
+            <div className="relative add-menu-container">
+              <button
+                ref={addButtonRef}
+                type="button"
+                onClick={handleAddClick}
+                className="tools-button"
+                aria-label="Add files or connect apps"
+                aria-expanded={showAddMenu}
+              >
+                <Plus className="h-4 w-4" />
+                <span>Add</span>
+              </button>
             </div>
 
             {/* Input field - smaller and streamlined */}
@@ -451,6 +642,98 @@ export const ChatPanel = ({
             </p>
           </div>
         </form>
+
+        {/* Enhanced Tools Menu */}
+        {showToolsMenu && (
+          <>
+            {isMobile && <div className="mobile-backdrop" />}
+            <div
+              ref={toolsMenuRef}
+              className={`tools-menu ${isClosing ? 'closing' : ''}`}
+              style={!isMobile ? {
+                left: toolsMenuPosition.x,
+                top: toolsMenuPosition.y
+              } : {}}
+              role="menu"
+              aria-label="Tools menu"
+            >
+              {toolsItems.map((item, index) => (
+                <div
+                  key={item.id}
+                  className={`tools-menu-item ${focusedIndex === index ? 'menu-item-focused' : ''}`}
+                  role="menuitem"
+                  tabIndex={0}
+                  onClick={(e) => handleToolItemClick(item, index, e)}
+                  onMouseEnter={() => setFocusedIndex(index)}
+                  aria-label={item.label}
+                >
+                  <item.icon className="icon" />
+                  <span>{item.label}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Enhanced Add Menu */}
+        {showAddMenu && (
+          <>
+            {isMobile && <div className="mobile-backdrop" />}
+            <div
+              ref={addMenuRef}
+              className={`add-menu ${isClosing ? 'closing' : ''}`}
+              style={!isMobile ? {
+                left: addMenuPosition.x,
+                top: addMenuPosition.y
+              } : {}}
+              role="menu"
+              aria-label="Add menu"
+            >
+              {addItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="add-menu-item"
+                  role="menuitem"
+                  tabIndex={0}
+                  onClick={item.action}
+                  onMouseEnter={() => {
+                    if (item.hasSubmenu) {
+                      setShowSubMenu(true);
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    if (item.hasSubmenu) {
+                      setTimeout(() => setShowSubMenu(false), 100);
+                    }
+                  }}
+                  aria-label={item.label}
+                >
+                  <span>{item.label}</span>
+                  {item.hasSubmenu && <ChevronRight className="h-4 w-4 ml-1" />}
+                </div>
+              ))}
+
+              {/* Sub-menu */}
+              {showSubMenu && (
+                <div className="submenu-panel">
+                  {subMenuItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="submenu-item"
+                      role="menuitem"
+                      tabIndex={0}
+                      onClick={item.action}
+                      aria-label={item.label}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
