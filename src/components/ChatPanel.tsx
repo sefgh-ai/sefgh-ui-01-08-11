@@ -23,15 +23,7 @@ import {
   Lightbulb,
   Wifi,
   PaintBucket,
-  ChevronDown,
-  BookOpen,
-  Image,
-  Brain,
-  Search,
-  Globe,
-  Layout,
-  ChevronRight,
-  Cloud
+  ChevronDown
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -69,110 +61,34 @@ export const ChatPanel = ({
   const [editContent, setEditContent] = useState('');
   const [showAttachMenu, setShowAttachMenu] = useState(false);
   const [showToolsMenu, setShowToolsMenu] = useState(false);
-  const [showAddMenu, setShowAddMenu] = useState(false);
-  const [showSubMenu, setShowSubMenu] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [toolsMenuPosition, setToolsMenuPosition] = useState({ x: 0, y: 0 });
-  const [addMenuPosition, setAddMenuPosition] = useState({ x: 0, y: 0 });
-  const [focusedIndex, setFocusedIndex] = useState(-1);
-  const [isClosing, setIsClosing] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const toolsButtonRef = useRef<HTMLButtonElement>(null);
-  const addButtonRef = useRef<HTMLButtonElement>(null);
-  const toolsMenuRef = useRef<HTMLDivElement>(null);
-  const addMenuRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Define tools and add menu items
-  const toolsItems = [
-    { id: 'study', icon: BookOpen, label: 'Study and Learn', action: () => handleToolAction('study') },
-    { id: 'image', icon: Image, label: 'Create Image', action: () => handleToolAction('image') },
-    { id: 'think', icon: Brain, label: 'Think Longer', action: () => handleToolAction('think') },
-    { id: 'research', icon: Search, label: 'Deep Research', action: () => handleToolAction('research') },
-    { id: 'web', icon: Globe, label: 'Web Search', action: () => handleToolAction('web') },
-    { id: 'canvas', icon: Layout, label: 'Canvas', action: () => handleToolAction('canvas') }
-  ];
-
-  const addItems = [
-    { id: 'files', label: 'Add Photos & Files', action: () => handleFileUpload() },
-    { id: 'apps', label: 'Add from Apps', hasSubmenu: true }
-  ];
-
-  const subMenuItems = [
-    { id: 'gdrive', icon: Cloud, label: 'Google Drive', action: () => handleCloudService('gdrive') },
-    { id: 'onedrive-personal', icon: Cloud, label: 'OneDrive (Personal)', action: () => handleCloudService('onedrive-personal') },
-    { id: 'onedrive-work', icon: Cloud, label: 'OneDrive (Work)', action: () => handleCloudService('onedrive-work') }
-  ];
-
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      
-      if (showAttachMenu && !target.closest('.attach-menu-container')) {
+      if (showAttachMenu && !(event.target as Element).closest('.attach-menu-container')) {
         setShowAttachMenu(false);
       }
-      if (showToolsMenu && !target.closest('.tools-menu-container')) {
-        closeToolsMenu();
-      }
-      if (showAddMenu && !target.closest('.add-menu-container')) {
-        closeAddMenu();
-      }
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (!showToolsMenu && !showAddMenu) return;
-
-      switch (event.key) {
-        case 'Escape':
-          event.preventDefault();
-          closeAllMenus();
-          break;
-        case 'ArrowDown':
-          event.preventDefault();
-          if (showToolsMenu) {
-            setFocusedIndex(prev => (prev + 1) % toolsItems.length);
-          }
-          break;
-        case 'ArrowUp':
-          event.preventDefault();
-          if (showToolsMenu) {
-            setFocusedIndex(prev => prev <= 0 ? toolsItems.length - 1 : prev - 1);
-          }
-          break;
-        case 'Enter':
-          event.preventDefault();
-          if (showToolsMenu && focusedIndex >= 0) {
-            handleToolItemClick(toolsItems[focusedIndex], focusedIndex);
-          }
-          break;
+      if (showToolsMenu && !(event.target as Element).closest('.tools-menu-container')) {
+        setShowToolsMenu(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleKeyDown);
-    
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showAttachMenu, showToolsMenu, showAddMenu, focusedIndex, toolsItems]);
+  }, [showAttachMenu, showToolsMenu]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -264,127 +180,6 @@ export const ChatPanel = ({
     };
 
     recognition.start();
-  };
-
-  // Enhanced Tools Menu Functions
-  const handleToolsClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    
-    if (showToolsMenu) {
-      closeToolsMenu();
-      return;
-    }
-
-    const rect = toolsButtonRef.current?.getBoundingClientRect();
-    if (rect) {
-      setToolsMenuPosition({
-        x: isMobile ? 0 : rect.left,
-        y: isMobile ? 0 : rect.top - 8
-      });
-    }
-    
-    setShowToolsMenu(true);
-    setFocusedIndex(-1);
-    closeAddMenu();
-  };
-
-  const closeToolsMenu = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setShowToolsMenu(false);
-      setIsClosing(false);
-      setFocusedIndex(-1);
-    }, 150);
-  };
-
-  const handleToolAction = (tool: string) => {
-    toast({
-      title: `${tool.charAt(0).toUpperCase() + tool.slice(1)} Tool`,
-      description: `Launching ${tool} functionality...`,
-      duration: 2000,
-    });
-    
-    closeToolsMenu();
-    
-    // Here you would implement the actual tool functionality
-    switch (tool) {
-      case 'image':
-        // Launch image creation modal
-        break;
-      case 'study':
-        // Launch study mode
-        break;
-      // Add other tool cases
-    }
-  };
-
-  const handleToolItemClick = (item: typeof toolsItems[0], index: number, event?: React.MouseEvent) => {
-    if (event) {
-      // Create ripple effect
-      const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / rect.width) * 100;
-      const y = ((event.clientY - rect.top) / rect.height) * 100;
-      
-      const element = event.currentTarget as HTMLElement;
-      element.style.setProperty('--ripple-x', `${x}%`);
-      element.style.setProperty('--ripple-y', `${y}%`);
-      element.classList.add('ripple');
-      
-      setTimeout(() => {
-        element.classList.remove('ripple');
-      }, 200);
-    }
-    
-    setTimeout(() => {
-      item.action();
-    }, 200);
-  };
-
-  // Enhanced Add Menu Functions
-  const handleAddClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    
-    if (showAddMenu) {
-      closeAddMenu();
-      return;
-    }
-
-    const rect = addButtonRef.current?.getBoundingClientRect();
-    if (rect) {
-      setAddMenuPosition({
-        x: isMobile ? 0 : rect.left,
-        y: isMobile ? 0 : rect.top - 8
-      });
-    }
-    
-    setShowAddMenu(true);
-    closeToolsMenu();
-  };
-
-  const closeAddMenu = () => {
-    setShowSubMenu(false);
-    setIsClosing(true);
-    setTimeout(() => {
-      setShowAddMenu(false);
-      setIsClosing(false);
-    }, 150);
-  };
-
-  const closeAllMenus = () => {
-    closeToolsMenu();
-    closeAddMenu();
-    setShowAttachMenu(false);
-  };
-
-  const handleCloudService = (service: string) => {
-    toast({
-      title: `Connecting to ${service}`,
-      description: `Opening OAuth flow for ${service}...`,
-      duration: 2000,
-    });
-    
-    closeAddMenu();
-    // Implement OAuth flow here
   };
 
   return (
@@ -543,45 +338,65 @@ export const ChatPanel = ({
       {/* Input area */}
       <div className="p-4">
         <form onSubmit={handleSubmit} className="relative">
-          {/* Main pill-shaped container - made thinner */}
-          <div className="bg-surface rounded-full px-4 py-1.5 flex items-center gap-3 shadow-sm border border-border">
-            {/* Enhanced Tools Button */}
+          <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl px-3 py-1 flex items-center gap-2">
+            {/* Tools dropdown */}
             <div className="relative tools-menu-container">
-              <button
-                ref={toolsButtonRef}
+              <Button
                 type="button"
-                onClick={handleToolsClick}
-                className="tools-button"
-                aria-label="Open tools menu"
-                aria-expanded={showToolsMenu}
+                variant="ghost"
+                className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full px-3 py-1.5 text-sm"
+                onClick={() => setShowToolsMenu(!showToolsMenu)}
               >
                 <Settings className="h-4 w-4" />
                 <span>Tools</span>
-              </button>
+                <ChevronDown className="h-3 w-3" />
+              </Button>
+              
+              {/* Tools dropdown menu */}
+              {showToolsMenu && (
+                <div className="absolute bottom-full left-0 mb-2 bg-gray-800 text-white rounded-lg shadow-xl p-2 w-56 z-50">
+                  <div 
+                    className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded cursor-pointer"
+                    onClick={() => {
+                      onToggleGithubSearch?.();
+                      setShowToolsMenu(false);
+                    }}
+                  >
+                    <Github className="h-4 w-4" />
+                    <span className="text-sm">Github search</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded cursor-pointer">
+                    <ImageIcon className="h-4 w-4" />
+                    <span className="text-sm">Create image</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded cursor-pointer">
+                    <Lightbulb className="h-4 w-4" />
+                    <span className="text-sm">Think longer</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded cursor-pointer">
+                    <Wifi className="h-4 w-4" />
+                    <span className="text-sm">Deep research</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded cursor-pointer">
+                    <Wifi className="h-4 w-4" />
+                    <span className="text-sm">Web search</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 hover:bg-gray-700 rounded cursor-pointer">
+                    <PaintBucket className="h-4 w-4" />
+                    <span className="text-sm">Canvas</span>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Enhanced Add Button */}
-            <div className="relative add-menu-container">
-              <button
-                ref={addButtonRef}
-                type="button"
-                onClick={handleAddClick}
-                className="tools-button"
-                aria-label="Add files or connect apps"
-                aria-expanded={showAddMenu}
-              >
-                <Plus className="h-4 w-4" />
-                <span>Add</span>
-              </button>
-            </div>
-
-            {/* Input field - smaller and streamlined */}
+            {/* Input field */}
             <Textarea
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Message SEFGH-AI..."
-              className="flex-1 min-h-[24px] max-h-32 bg-transparent border-none focus:ring-0 focus:outline-none resize-none placeholder:text-muted-foreground text-sm py-0 leading-6"
+              placeholder="Ask anything"
+              className="flex-1 min-h-[20px] max-h-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none placeholder:text-gray-500 dark:placeholder:text-gray-400 text-sm flex items-center placeholder:animate-pulse py-1 leading-normal"
+              style={{ display: 'flex', alignItems: 'center' }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -591,7 +406,7 @@ export const ChatPanel = ({
             />
 
             {/* Right side buttons */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               {/* Voice input button */}
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -599,10 +414,10 @@ export const ChatPanel = ({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className={`h-7 w-7 rounded-full ${
+                    className={`h-8 w-8 rounded-full ${
                       isListening 
-                        ? 'text-primary animate-pulse-fast bg-accent' 
-                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                        ? 'text-primary animate-pulse' 
+                        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
                     }`}
                     onClick={handleVoiceSearch}
                     disabled={isListening}
@@ -622,9 +437,9 @@ export const ChatPanel = ({
                     <Button 
                       type="submit" 
                       disabled={isLoading}
-                      className="h-7 w-7 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 p-0 ml-1"
+                      className="h-8 w-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 p-0"
                     >
-                      <Send className="h-3.5 w-3.5" />
+                      <Send className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -634,106 +449,7 @@ export const ChatPanel = ({
               )}
             </div>
           </div>
-          
-          {/* Helper text - smaller and lighter */}
-          <div className="flex justify-center mt-2">
-            <p className="text-xs text-muted-foreground">
-              Press Enter to send, Shift+Enter for new line
-            </p>
-          </div>
         </form>
-
-        {/* Enhanced Tools Menu */}
-        {showToolsMenu && (
-          <>
-            {isMobile && <div className="mobile-backdrop" />}
-            <div
-              ref={toolsMenuRef}
-              className={`tools-menu ${isClosing ? 'closing' : ''}`}
-              style={!isMobile ? {
-                left: toolsMenuPosition.x,
-                top: toolsMenuPosition.y
-              } : {}}
-              role="menu"
-              aria-label="Tools menu"
-            >
-              {toolsItems.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={`tools-menu-item ${focusedIndex === index ? 'menu-item-focused' : ''}`}
-                  role="menuitem"
-                  tabIndex={0}
-                  onClick={(e) => handleToolItemClick(item, index, e)}
-                  onMouseEnter={() => setFocusedIndex(index)}
-                  aria-label={item.label}
-                >
-                  <item.icon className="icon" />
-                  <span>{item.label}</span>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-
-        {/* Enhanced Add Menu */}
-        {showAddMenu && (
-          <>
-            {isMobile && <div className="mobile-backdrop" />}
-            <div
-              ref={addMenuRef}
-              className={`add-menu ${isClosing ? 'closing' : ''}`}
-              style={!isMobile ? {
-                left: addMenuPosition.x,
-                top: addMenuPosition.y
-              } : {}}
-              role="menu"
-              aria-label="Add menu"
-            >
-              {addItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="add-menu-item"
-                  role="menuitem"
-                  tabIndex={0}
-                  onClick={item.action}
-                  onMouseEnter={() => {
-                    if (item.hasSubmenu) {
-                      setShowSubMenu(true);
-                    }
-                  }}
-                  onMouseLeave={() => {
-                    if (item.hasSubmenu) {
-                      setTimeout(() => setShowSubMenu(false), 100);
-                    }
-                  }}
-                  aria-label={item.label}
-                >
-                  <span>{item.label}</span>
-                  {item.hasSubmenu && <ChevronRight className="h-4 w-4 ml-1" />}
-                </div>
-              ))}
-
-              {/* Sub-menu */}
-              {showSubMenu && (
-                <div className="submenu-panel">
-                  {subMenuItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="submenu-item"
-                      role="menuitem"
-                      tabIndex={0}
-                      onClick={item.action}
-                      aria-label={item.label}
-                    >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </>
-        )}
       </div>
     </div>
   );

@@ -152,83 +152,6 @@ export default {
 					'100%': {
 						transform: 'translateX(0)'
 					}
-				},
-				// Enhanced Tools Menu Animations
-				'menu-fade-in-up': {
-					'0%': {
-						opacity: '0',
-						transform: 'translateY(8px) scale(0.95)'
-					},
-					'100%': {
-						opacity: '1',
-						transform: 'translateY(0) scale(1)'
-					}
-				},
-				'menu-fade-out-down': {
-					'0%': {
-						opacity: '1',
-						transform: 'translateY(0) scale(1)'
-					},
-					'100%': {
-						opacity: '0',
-						transform: 'translateY(8px) scale(0.95)'
-					}
-				},
-				'submenu-slide-in': {
-					'0%': {
-						opacity: '0',
-						transform: 'translateX(-8px)'
-					},
-					'100%': {
-						opacity: '1',
-						transform: 'translateX(0)'
-					}
-				},
-				'submenu-slide-out': {
-					'0%': {
-						opacity: '1',
-						transform: 'translateX(0)'
-					},
-					'100%': {
-						opacity: '0',
-						transform: 'translateX(-8px)'
-					}
-				},
-				'mobile-slide-up': {
-					'0%': {
-						transform: 'translateY(100%)'
-					},
-					'100%': {
-						transform: 'translateY(0)'
-					}
-				},
-				'mobile-slide-down': {
-					'0%': {
-						transform: 'translateY(0)'
-					},
-					'100%': {
-						transform: 'translateY(100%)'
-					}
-				},
-				'ripple': {
-					'0%': {
-						transform: 'scale(0)',
-						opacity: '1'
-					},
-					'100%': {
-						transform: 'scale(4)',
-						opacity: '0'
-					}
-				},
-				'underline-expand': {
-					'0%': {
-						transform: 'scaleX(0)',
-						transformOrigin: 'left'
-					},
-					'100%': {
-						transform: 'scaleX(1)',
-						transformOrigin: 'left'
-					}
 				}
 			},
 			animation: {
@@ -238,16 +161,7 @@ export default {
 				'pulse-fast': 'pulse-fast 1s ease-in-out infinite',
 				'rainbow-shine': 'rainbow-shine 3s ease-in-out infinite',
 				'slide-in-left': 'slide-in-left 0.3s ease-out',
-				'slide-in-right': 'slide-in-right 0.3s ease-out',
-				// Enhanced Tools Menu Animations
-				'menu-fade-in-up': 'menu-fade-in-up 200ms cubic-bezier(0.17, 0.67, 0.83, 0.67)',
-				'menu-fade-out-down': 'menu-fade-out-down 150ms cubic-bezier(0.17, 0.67, 0.83, 0.67)',
-				'submenu-slide-in': 'submenu-slide-in 200ms cubic-bezier(0.17, 0.67, 0.83, 0.67)',
-				'submenu-slide-out': 'submenu-slide-out 150ms cubic-bezier(0.17, 0.67, 0.83, 0.67)',
-				'mobile-slide-up': 'mobile-slide-up 250ms cubic-bezier(0.17, 0.67, 0.83, 0.67)',
-				'mobile-slide-down': 'mobile-slide-down 200ms cubic-bezier(0.17, 0.67, 0.83, 0.67)',
-				'ripple': 'ripple 200ms cubic-bezier(0.17, 0.67, 0.83, 0.67)',
-				'underline-expand': 'underline-expand 200ms cubic-bezier(0.17, 0.67, 0.83, 0.67)'
+				'slide-in-right': 'slide-in-right 0.3s ease-out'
 			},
 			backdropBlur: {
 				xs: '2px'
